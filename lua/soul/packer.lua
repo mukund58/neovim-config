@@ -31,5 +31,38 @@ return require('packer').startup(function(use)
 	use 'vim-syntastic/syntastic'
 	use 'garymjr/nvim-snippets'
 	use 'brianhuster/live-preview.nvim'
+	use  "github/copilot.vim"
 	use 'rafamadriz/friendly-snippets'
+	use "mfussenegger/nvim-jdtls" -- Java extras (debugging, testing, etc.)
+	use {
+	  	'nvim-lualine/lualine.nvim',
+  		requires = { 'nvim-tree/nvim-web-devicons', opt = true }
+	}
+	require("packer").startup(function()
+  	use({
+    		"stevearc/conform.nvim",
+   		 config = function()
+      		require("conform").setup()
+	end,
+		  })
+		end)
+	use {
+		"folke/persistence.nvim",
+  		event = "BufReadPre", -- lazy load
+	  	module = "persistence",
+	  	config = function()
+	    	require("persistence").setup()
+ 	 end,
+	}
+	use { 'dart-lang/dart-vim-plugin' }
+	use { 'akinsho/flutter-tools.nvim', requires = 'nvim-lua/plenary.nvim' }
+	use { 'neovim/nvim-lspconfig' }
+	use { 'hrsh7th/nvim-cmp' }
+
+	use {
+	  	"loctvl842/monokai-pro.nvim",
+  		config = function()
+    		require("monokai-pro").setup()
+  end
+}
 end)

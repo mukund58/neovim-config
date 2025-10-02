@@ -3,6 +3,5 @@ require("soul.packer")
 require("soul.lsp-config")
 require("soul.clipboard")
 require("soul.cmp")
+require("soul.persistence")
 require("mason").setup()
-require("mason-lspconfig").setup()
-
