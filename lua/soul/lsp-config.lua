@@ -1,73 +1,47 @@
-local lspconfig = require('lspconfig')
-local capabilities = require('cmp_nvim_lsp').default_capabilities()
+-- lua/soul/lsp-config.lua
+-- Modern LSP setup for Neovim 0.11+
 
--- C/C++ setup
-lspconfig.clangd.setup {
-  capabilities = capabilities,
-}
-
--- HTML setup
-lspconfig.html.setup {
-  capabilities = capabilities,
-}
-
--- CSS setup
-lspconfig.cssls.setup {
-  capabilities = capabilities,
-}
-
--- JavaScript/TypeScript setup
--- React / JavaScript / TypeScript LSP
-lspconfig.ts_ls.setup {
-  cmd = { "typescript-language-server", "--stdio" },
-  capabilities = capabilities,
-  root_dir = lspconfig.util.root_pattern("package.json", "tsconfig.json", "jsconfig.json", ".git"),
-  on_attach = function(client, bufnr)
-    -- If you want Prettier/ESLint for formatting, disable tsserver formatting:
-    client.server_capabilities.documentFormattingProvider = false
-  end,
-  settings = {
-    -- Enables JSX/TSX support
-    typescript = {
-      format = {
-        enable = true,
-      },
-    },
-    javascript = {
-      format = {
-        enable = true,
-      },
-    },
+-- Optional, if you use Mason
+require("mason").setup()
+require("mason-lspconfig").setup {
+  ensure_installed = {
+    "clangd", "html", "cssls", "ts_ls",
+    "emmet_ls", "eslint", "intelephense",
+    "ast_grep", "asm_lsp", "jdtls"
   },
 }
 
-lspconfig.emmet_ls.setup {
-  capabilities = capabilities,
-  filetypes = { "html", "css", "javascriptreact", "typescriptreact" },
-}
-lspconfig.eslint.setup {
-  capabilities = capabilities,
-}
+-- Capabilities for nvim-cmp
+local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
+-- Setup all installed servers automatically
+-- Change this:
+-- require("mason-lspconfig").setup_handlers({
+--   function(server_name)
+--     ...
+--   end,
+-- })
 
--- PHP setup
-lspconfig.intelephense.setup {
-  capabilities = capabilities,
-}
+-- To this (if on an older version):
+require("mason-lspconfig").setup({
+  ensure_installed = {
+    -- ... your list here
+  },
+  handlers = {  -- Use the 'handlers' key inside the main setup
+    -- This function will be the default handler
+    ["*"] = function(server_name)
+      local config = vim.lsp.configs[server_name] or {}
+      -- ... rest of your configuration
+      vim.lsp.start(config)
+    end,
+  },
+})
+-- lua/soul/lsp-config.lua (inside the setup_handlers function)
 
--- ast-grep
-lspconfig.ast_grep.setup {
-  capabilities = capabilities,
-}
-
--- Assembly
-lspconfig.asm_lsp.setup {
-  capabilities = capabilities,
-}
-
--- Java setup (jdtls)
-lspconfig.jdtls.setup {
-  capabilities = capabilities,
-  cmd = { "jdtls" }, -- Ensure `jdtls` is installed and available in PATH
-  root_dir = lspconfig.util.root_pattern(".git", "mvnw", "gradlew", "pom.xml", "build.gradle"),
-}
+if server_name == "ts_ls" then
+  -- This line is CRITICAL to prevent ts_ls from conflicting with Prettier
+  config.on_attach = function(client)
+    client.server_capabilities.documentFormattingProvider = false
+  end
+  -- ... rest of ts_ls config
+end

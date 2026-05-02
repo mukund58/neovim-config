@@ -1,5 +1,14 @@
-require("nvim-treesitter.install").prefer_git = true
-require'nvim-treesitter.configs'.setup {
+local ok_install, ts_install = pcall(require, "nvim-treesitter.install")
+if ok_install then
+  ts_install.prefer_git = true
+end
+
+local ok_configs, ts_configs = pcall(require, "nvim-treesitter.configs")
+if not ok_configs then
+  return
+end
+
+ts_configs.setup {
   -- A list of parser names, or "all" (the listed parsers MUST always be installed)
   ensure_installed = { "c", "lua", "markdown", "markdown_inline", "javascript", "rust", "typescript","php" , "html", "css", "json", "bash", "python", "go", "java", "sql", "dockerfile" },
 

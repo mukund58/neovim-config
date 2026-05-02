@@ -1,9 +1,12 @@
 -- nvim-cmp setup
 local cmp = require("cmp")
 local luasnip = require("luasnip")
-require("luasnip.loaders.from_vscode").lazy_load() -- Load VSCode-style snippets
+
+-- Load snippets
+require("luasnip.loaders.from_vscode").lazy_load()
 require("luasnip.loaders.from_lua").lazy_load({ paths = "~/.config/nvim/lua/snippets" })
 
+-- Smart Tab behavior
 vim.keymap.set({ "i", "s" }, "<Tab>", function()
   if luasnip.expand_or_jumpable() then
     luasnip.expand_or_jump()
@@ -20,11 +23,11 @@ vim.keymap.set({ "i", "s" }, "<S-Tab>", function()
   end
 end, { expr = true, silent = true })
 
-
+-- cmp setup
 cmp.setup({
   snippet = {
     expand = function(args)
-      luasnip.lsp_expand(args.body) -- Use LuaSnip for snippet expansion
+      luasnip.lsp_expand(args.body)
     end,
   },
   mapping = cmp.mapping.preset.insert({
@@ -32,23 +35,18 @@ cmp.setup({
     ["<C-f>"] = cmp.mapping.scroll_docs(4),
     ["<C-Space>"] = cmp.mapping.complete(),
     ["<C-e>"] = cmp.mapping.abort(),
-    ["<CR>"] = cmp.mapping.confirm({ select = true }), -- Accept suggestion
+    ["<CR>"] = cmp.mapping.confirm({ select = true }),
   }),
   sources = cmp.config.sources({
-    { name = "nvim_lsp" }, -- LSP suggestions
-    { name = "luasnip" },  -- Snippets
+    { name = "nvim_lsp" },
+    { name = "luasnip" },
   }, {
-    { name = "buffer" },   -- Buffer suggestions
-    { name = "path" },     -- Path suggestions
+    { name = "buffer" },
+    { name = "path" },
   }),
 })
 
--- Setup LSP integration with nvim-cmp
+-- New-style LSP setup (Neovim 0.11+)
 local capabilities = require("cmp_nvim_lsp").default_capabilities()
-local lspconfig = require("lspconfig")
 
--- Example: Enable LSP for HTML
-lspconfig.html.setup {
-  capabilities = capabilities,
-}
-
+-- Example: enable HTML LSP
