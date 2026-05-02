@@ -7,6 +7,8 @@ return require('packer').startup(function(use)
   -- UI & Colors
   use { 'rose-pine/neovim', as = 'rose-pine' }
   vim.cmd('colorscheme rose-pine')
+  use 'nvim-tree/nvim-web-devicons'
+  use 'goolord/alpha-nvim'
 
   -- Syntax & Treesitter
   use { 'nvim-treesitter/nvim-treesitter', run = ':TSUpdate' }
