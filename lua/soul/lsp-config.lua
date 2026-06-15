@@ -7,10 +7,21 @@ require("mason-lspconfig").setup {
   ensure_installed = {
     "clangd", "html", "cssls", "ts_ls",
     "emmet_ls", "eslint", "intelephense",
-    "ast_grep", "asm_lsp", "jdtls"
+    "ast_grep", "jdtls", "omnisharp"
   },
 }
+vim.env.DOTNET_ROOT = "/usr/share/dotnet"
+vim.lsp.config("omnisharp", {
+    cmd = { "OmniSharp", "--languageserver", "--hostPID", tostring(vim.fn.getpid()) },
+    filetypes = { "cs" },
+    root_markers = {
+        "*.sln",
+        "*.csproj",
+        ".git",
+    },
+})
 
+vim.lsp.enable("omnisharp")
 -- Capabilities for nvim-cmp
 local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
@@ -24,9 +35,6 @@ local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
 -- To this (if on an older version):
 require("mason-lspconfig").setup({
-  ensure_installed = {
-    -- ... your list here
-  },
   handlers = {  -- Use the 'handlers' key inside the main setup
     -- This function will be the default handler
     ["*"] = function(server_name)
